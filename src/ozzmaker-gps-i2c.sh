@@ -1,51 +1,30 @@
 #!/bin/bash
-
 clear
-test=0
-trap "exit 1" TERM
-TOP_PID=$$
-
-function alert()
-{
-   echo "$1"
-   kill -s TERM $TOP_PID
+usage() {
+    echo "Usage: ./ozzmaker-gps-i2c.sh {start|stop|restart}"
+    exit 1
 }
 
-Usage="
-Usage: ./start_gps.sh [start] [stop] [restart]
-"
+# Check the number of arguments
+if [ "$#" -ne 1 ]; then
+    usage
+fi
 
 Fn=$1
 printf "Executing: $Fn\n"
 
+if [ "$#" -ne 1 ]; then
+	alert "$Usage"
+fi
+
 #Shut everything down 
-if [ "$Fn" == "stop" ]; then
+if [ "$Fn" == "stop" ] || [ "$Fn" == "restart" ]; then
+	printf "Stopping...\n"
 	rm -f /tmp/gps
 fi
 
-if [ "$Fn" == "serial" ]; then
-        mknod /tmp/gps p
-        stdbuf -oL /usr/bin/python3 /usr/local/bin/ozzmaker-gps-i2c.py > /tmp/gps &
-fi
-
-if [ "$Fn" == "restart" ]; then
-	sudo ls -al /tmp/gps*
-	sudo ls -al /run/gps*
-	sudo netstat -l | grep gps
-	sudo systemctl list-sockets | grep gps
-	cat /etc/default/gpsd | grep DEVICES
-fi
-
-if [ "$Fn" == "start" ]; then
-        mknod /tmp/gps p
-	#/bin/bash stdbuf -oL python i2c-gps.py > /tmp/gps
+if [ "$Fn" == "start" ] || [ "$Fn" == "restart" ]; then
+        printf "Starting...\n"
+	mknod /tmp/gps p
 	stdbuf -oL /usr/bin/python3 /usr/local/bin/ozzmaker-gps-i2c.py > /tmp/gps
-	#sudo gpsd -N -D3 -F /tmp/gps
-	#sudo gpsd -N -D3 -F -n /tmp/gps
 fi
-
-#exit 0
-#Start
-#/tmp/gps p stdbuf -oL python i2c-gps.py > /tmp/gps &
-##gpsd -N -D3 -F @RUNDIR/gpsd.sock /tmp/gps
-#sudo gpsd -N -D3 -F /tmp/gps
