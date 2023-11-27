@@ -1,0 +1,4 @@
+START_DAEMON="false"
+USBAUTO="false"
+DEVICES="/tmp/gps"
+GPSD_OPTIONS=" -F -n"

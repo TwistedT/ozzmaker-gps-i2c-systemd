@@ -1,0 +1,13 @@
+[Unit]
+Description=OzzMaker GPS-IMU v4 GPS viz I2C Service
+After=multi-user.target
+
+[Service]
+Type=simple
+User=pi
+IgnoreSIGPIPE=false
+ExecStart=/bin/bash /usr/local/bin/ozzmaker-gps-i2c.sh start 
+ExecStop=/bin/bash /usr/local/bin/ozzmaker-gps-i2c.sh stop
+
+[Install]
+WantedBy=multi-user.target
